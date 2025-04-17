@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin View - Registrations</title>
+</head>
+<body>
+    <h1>All Registration</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Roll Number</th>
+                <th>Date of Birth</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Course</th>
+                <th>Reason to Join</th>
+                <th>Expectations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registration in registrations %}
+            <tr>
+                <td>{{ registration.name }}</td>
+                <td>{{ registration.roll_number }}</td>
+                <td>{{ registration.dob }}</td>
+                <td>{{ registration.year }}</td>
+                <td>{{ registration.semester }}</td>
+                <td>{{ registration.course }}</td>
+                <td>{{ registration.reason_to_join }}</td>
+                <td>{{ registration.expectations }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No registrations found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/">Back to Registration</a>
+</body>
+</html>
