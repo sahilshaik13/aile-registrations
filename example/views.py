@@ -71,7 +71,7 @@ def login_user(request):
             return HttpResponse(f"An error occurred: {str(e)}", status=500)
 
     elif request.method == 'GET':
-        return render(request, 'registration/login.html')
+        return render(request, 'login.html')
 
     return HttpResponse("Method not allowed", status=405)
 
