@@ -434,7 +434,8 @@
             <div class="form-group">
                 <label for="{{ form.reason_to_join.id_for_label }}">{{ form.reason_to_join.label }}</label>
                 {{ form.reason_to_join }}
-                <div class="help-text">Tell us why you're interested in joining our community</div>
+                <div id="reasonCounter">500 characters left</div>
+                <div class="help-text">{{ form.reason_to_join.help_text }}</div>
                 {% if form.reason_to_join.errors %}
                 <ul class="errorlist">
                     {% for error in form.reason_to_join.errors %}
@@ -447,7 +448,8 @@
             <div class="form-group">
                 <label for="{{ form.expectations.id_for_label }}">{{ form.expectations.label }}</label>
                 {{ form.expectations }}
-                <div class="help-text">What do you hope to learn or gain from this experience?</div>
+                <div id="expectationsCounter">500 characters left</div>
+                <div class="help-text">{{ form.expectations.help_text }}</div>
                 {% if form.expectations.errors %}
                 <ul class="errorlist">
                     {% for error in form.expectations.errors %}
@@ -456,7 +458,7 @@
                 </ul>
                 {% endif %}
             </div>
-            
+                        
             <button type="submit">
                 <i class="fas fa-rocket"></i> Submit Application
             </button>
@@ -522,5 +524,14 @@
             window.location.href = "{% url 'admin:index' %}";
         });
     </script>
+    <script>
+        function updateCounter(textarea, counterId) {
+            const maxLength = textarea.getAttribute('maxlength');
+            const currentLength = textarea.value.length;
+            const remainingChars = maxLength - currentLength;
+        
+            document.getElementById(counterId).innerText = `${remainingChars} characters left`;
+        }
+        </script>
 </body>
 </html>
