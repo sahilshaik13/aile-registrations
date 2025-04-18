@@ -1,3 +1,6 @@
 django
 python-decouple
 supabase
+razorpay
+setuptools
+requests

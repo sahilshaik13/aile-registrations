@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h1>Complete Your Registration</h1>
+    <button id="pay-button" aria-label="Pay Now">Pay Now</button>
+    <button id="cancel-button" aria-label="Cancel Payment">Cancel Payment</button>
+
+    <script>
+        var options = {
+            "key": "{{ razorpay_key_id }}", // Use the Razorpay Key ID passed from the view
+            "amount": "100", // Amount in paise (10000 refers to 100 INR)
+            "currency": "INR",
+            "name": "AppIgnite Learning Ent.",
+            "description": "Registration Fee",
+            "order_id": "{{ razorpay_order_id }}", // Pass the order ID generated from the backend
+            "handler": function (response) {
+                // Redirect to success view with payment details
+                window.location.href = "{% url 'payment_success' %}?payment_id=" + response.razorpay_payment_id + "&order_id=" + response.razorpay_order_id + "&registration_id={{ registration_id }}";
+            },
+            "theme": {
+                "color": "#F37254"
+            },
+            "modal": {
+                "ondismiss": function() {
+                    // Handle the case when the modal is dismissed
+                    alert('Payment process was cancelled.');
+                }
+            }
+        };
+        
+        document.getElementById('pay-button').onclick = function(e) {
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+            e.preventDefault();
+        }
+
+        document.getElementById('cancel-button').onclick = function() {
+            window.location.href = "{% url 'payment_cancelled' %}"; // Redirect to cancelled page
+        }
+    </script>
+</body>
+</html>
