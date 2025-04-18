@@ -530,5 +530,35 @@
             document.getElementById(counterId).innerText = `${remainingChars} characters left`;
         }
         </script>
+        <script>
+            // Define the mapping between year and semesters
+            const yearToSemester = {
+                '1': ['1', '2'], // 1st Year: 1st & 2nd Semesters
+                '2': ['3', '4'], // 2nd Year: 3rd & 4th Semesters
+                '3': ['5', '6'], // 3rd Year: 5th & 6th Semesters
+                '4': ['7', '8']  // 4th Year: 7th & 8th Semesters
+            };
+        
+            // Get the year and semester dropdowns
+            const yearDropdown = document.querySelector('[name="year"]');
+            const semesterDropdown = document.querySelector('[name="semester"]');
+        
+            // Add event listener to update semesters dynamically
+            yearDropdown.addEventListener('change', function () {
+                const selectedYear = yearDropdown.value; // Get selected year
+                const semesters = yearToSemester[selectedYear] || []; // Get corresponding semesters
+        
+                // Clear existing semester options
+                semesterDropdown.innerHTML = '';
+        
+                // Add new options dynamically
+                semesters.forEach(semester => {
+                    const option = document.createElement('option');
+                    option.value = semester;
+                    option.textContent = `${semester} Semester`;
+                    semesterDropdown.appendChild(option);
+                });
+            });
+        </script>
 </body>
 </html>

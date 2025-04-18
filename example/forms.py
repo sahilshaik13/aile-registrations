@@ -4,7 +4,11 @@ from datetime import datetime
 class RegistrationForm(forms.Form):
     name = forms.CharField(max_length=100)
     roll_number = forms.CharField(max_length=20)
-    dob = forms.DateField(widget=forms.SelectDateWidget(years=range(1999, datetime.now().year + 1)))
+    dob = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'type': 'date'
+        })
+    )
     mobile_number = forms.CharField(max_length=15)
     email = forms.EmailField()
     year = forms.ChoiceField(choices=[('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')])
