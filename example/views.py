@@ -33,6 +33,8 @@ def register(request):
                 'name': form.cleaned_data['name'],
                 'roll_number': form.cleaned_data['roll_number'],
                 'dob': form.cleaned_data['dob'].strftime('%Y-%m-%d'),  # Convert date to string
+                'mobile_number': form.cleaned_data['mobile_number'],  # New field for mobile number
+                'email': form.cleaned_data['email'],  # New field for email address
                 'year': form.cleaned_data['year'],
                 'semester': form.cleaned_data['semester'],
                 'course': form.cleaned_data['course'],
@@ -64,8 +66,19 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def success(request):
-    message = request.GET.get('message', 'Payment processed successfully!')
-    return render(request, 'success.html', {'message': message})
+    payment_id = request.GET.get('payment_id')
+    order_id = request.GET.get('order_id')
+
+    # Fetch the user details using payment_id and order_id
+    response = supabase.table('registrations').select('*') \
+        .eq('payment_id', payment_id).eq('order_id', order_id).execute()
+
+    registration = response.data[0] if response.data else None
+
+    return render(request, 'success.html', {
+        'message': 'Payment processed successfully!' if registration else 'No registration details found!',
+        'registration': registration
+    })
 
 def login_user(request):
     if request.method == 'POST':
@@ -112,25 +125,39 @@ def home(request):
 
     return render(request, 'home.html', {'registrations': registrations})
 
+from django.urls import reverse
+from urllib.parse import urlencode
+
 def payment_success(request):
     payment_id = request.GET.get('payment_id')
     order_id = request.GET.get('order_id')
     registration_id = request.GET.get('registration_id')
 
-    # Verify the payment with Razorpay
     try:
         payment = razorpay_client.payment.fetch(payment_id)
+        
         if payment['status'] == 'captured':
-            # Update registration status to successful
-            supabase.table('registrations'). update({'status': 'successful'}).eq('id', registration_id).execute()
-            return redirect('success')  # Redirect to the success page
+            supabase.table('registrations').update({
+                'status': 'successful',
+                'payment_id': payment_id,
+                'order_id': order_id
+            }).eq('id', registration_id).execute()
         else:
-            # Update registration status to not successful
-            supabase.table('registrations').update({'status': 'not successful'}).eq('id', registration_id).execute()
-            return redirect('success')  # Redirect to the success page with a message
+            supabase.table('registrations').update({
+                'status': 'not successful',
+                'payment_id': payment_id,
+                'order_id': order_id
+            }).eq('id', registration_id).execute()
+
+        # Use reverse to get the base URL and urlencode to append query parameters
+        base_url = reverse('success')  # Ensure 'success' is the name of your view in urls.py
+        query_params = urlencode({'payment_id': payment_id, 'order_id': order_id})
+        success_url = f"{base_url}?{query_params}"
+
+        return redirect(success_url)
     except Exception as e:
         return HttpResponse(f"An error occurred while verifying payment: {str(e)}", status=500)
-
+        
 @csrf_exempt  # Disable CSRF for this view
 def razorpay_webhook(request):
     if request.method == 'POST':

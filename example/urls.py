@@ -2,6 +2,8 @@
 from django.urls import path
 
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.register, name='register'),
@@ -12,3 +14,5 @@ urlpatterns = [
     path('payment-cancelled/', views.payment_cancelled, name='payment_cancelled'),
     path('razorpay/webhook/', views.razorpay_webhook, name='razorpay_webhook'),  # Add this line for webhook
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

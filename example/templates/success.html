@@ -1,10 +1,220 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Successful</title>
+    <title>Registration Successful - AppIgnite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #f8f9fa;
+            --accent-color: #4ade80;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .logo {
+            max-height: 90px;
+            max-width: 90%;
+        }
+        
+        .success-icon {
+            font-size: 70px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+
+        .details-card {
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .details-item {
+            margin-bottom: 12px;
+        }
+
+        .details-item .label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .details-item .value {
+            color: #212529;
+        }
+
+        .button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8150e4 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4);
+        }
+        
+        .button i {
+            margin-right: 10px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+                box-shadow: 0 5px 15px var(--shadow-color);
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .success-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Registration Successful!</h1>
-    <p>Thank you for
+    <div class="container">
+        <!-- Logo Section -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 32px;">
+            <div style="background: linear-gradient(to right, #06b6d4, #3b82f6); padding: 8px; border-radius: 8px;">
+                <img src="{% static 'img/appignite logo.png' %}" alt="Logo" style="height: 48px; width: 48px;" />
+            </div>
+            <span style="font-weight: bold; font-size: 1.25rem; letter-spacing: -0.5px;">
+                <span style="color: #06b6d4;">App</span><span style="color: #000;">Ignite</span>
+            </span>
+        </div>
+    
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h1>Registration Successful!</h1>
+        
+        <p>Thank you for registering for AppIgnite. Your application has been received and is being processed. We're excited to have you join our community!</p>
+        
+        <div class="details-card">
+            {% if registration %}
+                <div class="details-item">
+                    <span class="label">Registration ID:</span>
+                    <span class="value">{{ registration.id }}</span>
+                </div>
+                <div class="details-item">
+                    <span class="label">Name:</span>
+                    <span class="value">{{ registration.name }}</span>
+                </div>
+                <div class="details-item">
+                    <span class="label">Course:</span>
+                    <span class="value">{{ registration.course }}</span>
+                </div>
+                <div class="details-item">
+                    <span class="label">Mobile Number:</span>
+                    <span class="value">{{ registration.mobile_number }}</span>
+                </div>
+                <div class="details-item">
+                    <span class="label">Email Address:</span>
+                    <span class="value">{{ registration.email }}</span>
+                </div>
+                <div class="details-item">
+                    <span class="label">Payment Status:</span>
+                    <span class="value">Completed</span>
+                </div>
+            {% else %}
+                <p>No registration details found.</p>
+            {% endif %}
+        </div>
+        
+        <a href="{% url 'register' %}" class="button">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+        
+        <div class="footer">
+            <p>A confirmation email has been sent to your registered email address.</p>
+            <p>If you have any questions, please contact <strong>appignitelearning@outlook.com</strong></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,22 +1,526 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
+    <title>AppIgnite Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .logo {
+            max-height: 90px;
+            max-width: 90%;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        
+        form {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--secondary-color);
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .help-text {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        
+        .errorlist {
+            color: #dc3545;
+            font-size: 14px;
+            list-style: none;
+            margin-top: 4px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #8150e4 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4);
+        }
+        
+        button i {
+            margin-right: 10px;
+        }
+        
+        /* Styling select date widget */
+        select[name$="_month"],
+        select[name$="_day"],
+        select[name$="_year"] {
+            width: 32%;
+            display: inline-block;
+            margin-right: 1%;
+        }
+        
+        select[name$="_year"] {
+            margin-right: 0;
+        }
+        
+        /* Django form styles */
+        form p {
+            margin-bottom: 22px;
+        }
+        
+        /* Admin access icon */
+        .admin-access {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        
+        .admin-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #495057;
+            opacity: 0.5;
+            transition: all 0.3s;
+            width: auto;
+            padding: 0;
+            font-size: 20px;
+        }
+        
+        .admin-btn:hover {
+            opacity: 1;
+            transform: rotate(45deg);
+            box-shadow: none;
+        }
+        
+        /* Admin login modal */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .admin-modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px; /* Reduced font size further */
+            color: black;
+            padding: 2px; /* Reduced padding for a smaller button appearance */
+            position: absolute; /* Positioning the button */
+            top: 18px; /* Push to the top corner */
+            right: 18px; /* Push to the right corner */
+            width: auto; /* Minimum width */
+            height: auto; /* Minimum height */
+        }
+        
+        .modal-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .modal-btn-secondary {
+            background-color: white;
+            color: #6c757d;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+                box-shadow: 0 5px 15px var(--shadow-color);
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            input, select, textarea, button {
+                padding: 10px 14px;
+                font-size: 15px;
+            }
+            
+            /* Stack date selects on small screens */
+            select[name$="_month"],
+            select[name$="_day"],
+            select[name$="_year"] {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .admin-access {
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Register</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-    <div>
-        <a href="{% url 'login_user' %}" style="text-decoration: none; color: blue;">
-            <i class="fas fa-sign-in-alt"></i> Login
-        </a>
+    <div class="container">
+        <!-- Admin access icon -->
+        <div class="admin-access">
+            <button class="admin-btn" id="adminButton" aria-label="Admin Access">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+        
+        <!-- Logo Section -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 32px;">
+                <div style="background: linear-gradient(to right, #06b6d4, #3b82f6); padding: 8px; border-radius: 8px;">
+                    <img src="{% static 'img/appignite logo.png' %}" alt="Logo" style="height: 48px; width: 48px;" />
+                </div>
+                <span style="font-weight: bold; font-size: 1.25rem; letter-spacing: -0.5px;">
+                    <span style="color: #06b6d4;">App</span><span style="color: #000;">Ignite</span>
+                </span>
+            </div>
+
+            <h1>AppIgnite Registration</h1>
+        <div class="subtitle">Join our tech community and ignite your app development journey</div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <ul class="errorlist">
+                    {% for error in form.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.roll_number.id_for_label }}">{{ form.roll_number.label }}</label>
+                {{ form.roll_number }}
+                {% if form.roll_number.errors %}
+                <ul class="errorlist">
+                    {% for error in form.roll_number.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.dob.id_for_label }}">{{ form.dob.label }}</label>
+                {{ form.dob }}
+                {% if form.dob.errors %}
+                <ul class="errorlist">
+                    {% for error in form.dob.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.mobile_number.id_for_label }}">{{ form.mobile_number.label }}</label>
+                {{ form.mobile_number }}
+                {% if form.mobile_number.errors %}
+                <ul class="errorlist">
+                    {% for error in form.mobile_number.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <ul class="errorlist">
+                    {% for error in form.email.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.year.id_for_label }}">{{ form.year.label }}</label>
+                {{ form.year }}
+                {% if form.year.errors %}
+                <ul class="errorlist">
+                    {% for error in form.year.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.semester.id_for_label }}">{{ form.semester.label }}</label>
+                {{ form.semester }}
+                {% if form.semester.errors %}
+                <ul class="errorlist">
+                    {% for error in form.semester.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.course.id_for_label }}">{{ form.course.label }}</label>
+                {{ form.course }}
+                {% if form.course.errors %}
+                <ul class="errorlist">
+                    {% for error in form.course.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.reason_to_join.id_for_label }}">{{ form.reason_to_join.label }}</label>
+                {{ form.reason_to_join }}
+                <div class="help-text">Tell us why you're interested in joining our community</div>
+                {% if form.reason_to_join.errors %}
+                <ul class="errorlist">
+                    {% for error in form.reason_to_join.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.expectations.id_for_label }}">{{ form.expectations.label }}</label>
+                {{ form.expectations }}
+                <div class="help-text">What do you hope to learn or gain from this experience?</div>
+                {% if form.expectations.errors %}
+                <ul class="errorlist">
+                    {% for error in form.expectations.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <button type="submit">
+                <i class="fas fa-rocket"></i> Submit Application
+            </button>
+        </form>
     </div>
+    
+    <!-- Admin Login Modal -->
+    <div class="admin-modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Login</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="adminLoginForm" action="{% url 'login_user' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-form-group">
+                    <label for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" name="username" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" name="password" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-secondary" id="cancelModal">Cancel</button>
+                    <button type="submit" class="modal-btn modal-btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Admin modal functionality
+        const adminButton = document.getElementById('adminButton');
+        const adminModal = document.getElementById('adminModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModal = document.getElementById('cancelModal');
+        
+        adminButton.addEventListener('click', function() {
+            adminModal.classList.add('show');
+        });
+        
+        closeModal.addEventListener('click', function() {
+            adminModal.classList.remove('show');
+        });
+        
+        cancelModal.addEventListener('click', function() {
+            adminModal.classList.remove('show');
+        });
+        
+        // Close modal if clicked outside
+        adminModal.addEventListener('click', function(event) {
+            if (event.target === adminModal) {
+                adminModal.classList.remove('show');
+            }
+        });
+        
+        // For direct admin access without modal (alternative approach)
+        adminButton.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            window.location.href = "{% url 'admin:index' %}";
+        });
+    </script>
 </body>
 </html>
