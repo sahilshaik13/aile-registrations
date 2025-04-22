@@ -158,6 +158,69 @@
                 flex-direction: column;
             }
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            text-align: left; /* Moves labels to the left */
+        }
+        
+        form input, form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+        
+        form input:focus, form textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(78, 84, 200, 0.2);
+        }
+        
+        /* Ensure labels and inputs have clear spacing */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #555;
+            transition: color 0.3s ease-in-out;
+        }
+        
+        .close:hover {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -196,6 +259,41 @@
             <button id="cancel-button" aria-label="Cancel Payment">
                 <i class="fas fa-times"></i> Cancel
             </button>
+            <!-- Need Help Button -->
+<button id="need-help-button" aria-label="Need Help">
+    <i class="fas fa-question-circle"></i> Need Help
+</button>
+
+<!-- Modal -->
+<div id="help-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Contact Support</h2>
+        <form id="help-form">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="mobile">Mobile Number:</label>
+                <input type="tel" id="mobile" name="mobile" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="roll">Roll Number:</label>
+                <input type="text" id="roll" name="roll" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+            </div>
+        
+            <button type="submit" id="send-message">Send</button>
+        </form>
+    </div>
+</div>
         </div>
     </div>
 
@@ -232,6 +330,50 @@
             // Redirect to cancelled page
             window.location.href = "{% url 'payment_cancelled' %}";
         }
+    </script>
+    <script>
+        document.getElementById("need-help-button").onclick = function() {
+            document.getElementById("help-modal").style.display = "flex";
+        };
+        
+        // Close modal when clicking the 'X' button
+        document.querySelector(".close").onclick = function() {
+            document.getElementById("help-modal").style.display = "none";
+        };
+        
+        // Close modal if user clicks outside the modal content
+        window.onclick = function(event) {
+            var modal = document.getElementById("help-modal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+        document.getElementById("help-form").onsubmit = function(e) {
+            e.preventDefault();
+        
+            var data = {
+                name: document.getElementById("name").value,
+                mobile: document.getElementById("mobile").value,
+                roll: document.getElementById("roll").value,
+                message: document.getElementById("message").value
+            };
+        
+            fetch("/send-help/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message);
+                if (result.status === "success") {
+                    document.getElementById("help-modal").style.display = "none";
+                }
+            })
+            .catch(error => {
+                alert("Error sending message!");
+            });
+        };
     </script>
 </body>
 </html>

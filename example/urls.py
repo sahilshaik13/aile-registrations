@@ -13,6 +13,7 @@ urlpatterns = [
     path('payment-success/', views.payment_success, name='payment_success'),
     path('payment-cancelled/', views.payment_cancelled, name='payment_cancelled'),
     path('razorpay/webhook/', views.razorpay_webhook, name='razorpay_webhook'),  # Add this line for webhook
+    path("send-help/", views.send_help_request, name="send_help_request"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

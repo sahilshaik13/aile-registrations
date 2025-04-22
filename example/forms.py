@@ -9,7 +9,14 @@ class RegistrationForm(forms.Form):
             'type': 'date'
         })
     )
-    mobile_number = forms.CharField(max_length=15)
+    mobile_number = forms.CharField(
+        max_length=15,
+        min_length=10,
+        error_messages={
+            'min_length': 'Mobile number must be at least 10 digits.',
+            'max_length': 'Mobile number cannot exceed 15 digits.'
+        }
+    )
     email = forms.EmailField()
     year = forms.ChoiceField(choices=[('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')])
     semester = forms.ChoiceField(choices=[

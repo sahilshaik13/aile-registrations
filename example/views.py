@@ -47,7 +47,7 @@ def register(request):
 
             # Create a Razorpay order
             razorpay_order = razorpay_client.order.create({
-                'amount': 100,  # Amount in paise (100 INR)
+                'amount': 20000,  # Amount in paise (100 INR)
                 'currency': 'INR',
                 'receipt': f'receipt# {registration_id}',
                 'notes': {
@@ -199,3 +199,36 @@ def razorpay_webhook(request):
 
 def payment_cancelled(request):
     return render(request, 'cancelled.html')
+
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def send_help_request(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            bot_token = "7669570716:AAEcPDr0eNSyFp8zeV54ROajCayPhNXMQ84"
+            chat_id = "7578492787"
+            telegram_api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+
+            message_text = f"**Need Help Request:**\nName: {data['name']}\nMobile: {data['mobile']}\nRoll Number: {data['roll']}\nMessage: {data['message']}"
+
+            response = requests.post(telegram_api_url, json={
+                "chat_id": chat_id,
+                "text": message_text,
+                "parse_mode": "Markdown"
+            })
+
+            if response.status_code == 200:
+                return JsonResponse({"status": "success", "message": "Message sent successfully!"})
+            else:
+                return JsonResponse({"status": "error", "message": "Failed to send message."}, status=500)
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
