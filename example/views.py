@@ -205,14 +205,20 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+import requests
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from decouple import config
+
 @csrf_exempt
 def send_help_request(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
 
-            bot_token = "7669570716:AAEcPDr0eNSyFp8zeV54ROajCayPhNXMQ84"
-            chat_id = "7578492787"
+            bot_token = config("BOT_TOKEN")
+            chat_id = config("CHAT_ID")
             telegram_api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
             message_text = f"**Need Help Request:**\nName: {data['name']}\nMobile: {data['mobile']}\nRoll Number: {data['roll']}\nMessage: {data['message']}"
