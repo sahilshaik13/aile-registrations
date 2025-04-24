@@ -333,6 +333,18 @@
         
         <form method="post">
             {% csrf_token %}
+            <div class="form-group">
+                <label for="belongs_to_college">Do you belong to Nawab Shah Alam Khan College of Engineering and Technology?</label>
+                <select id="id_belongs_to_college" name="belongs_to_college" onchange="toggleCollegeNameField()">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="college_name_group" style="display: none;">
+                <label for="college_name">Enter your college name:</label>
+                <input type="text" id="college_name" name="college_name">
+            </div>
             
             <div class="form-group">
                 <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
@@ -415,7 +427,6 @@
                 </ul>
                 {% endif %}
             </div>
-            
             <div class="form-group">
                 <label for="{{ form.course.id_for_label }}">{{ form.course.label }}</label>
                 {{ form.course }}
@@ -428,6 +439,11 @@
                 {% endif %}
             </div>
             
+            <div class="form-group" id="other_course_group" style="display: none;">
+                <label for="{{ form.other_course.id_for_label }}">{{ form.other_course.label }}</label>
+                <input type="text" id="id_other_course" name="other_course">
+            </div>
+
             <div class="form-group">
                 <label for="{{ form.reason_to_join.id_for_label }}">{{ form.reason_to_join.label }}</label>
                 {{ form.reason_to_join }}
@@ -489,69 +505,96 @@
         </div>
     </div>
     
-    <script>
-        // Admin modal functionality
-        const adminButton = document.getElementById('adminButton');
-        const adminModal = document.getElementById('adminModal');
-        const closeModal = document.getElementById('closeModal');
-        const cancelModal = document.getElementById('cancelModal');
-        
-        adminButton.addEventListener('click', function() {
-            adminModal.classList.add('show');
-        });
-        
-        closeModal.addEventListener('click', function() {
-            adminModal.classList.remove('show');
-        });
-        
-        cancelModal.addEventListener('click', function() {
-            adminModal.classList.remove('show');
-        });
-        
-        // Close modal if clicked outside
-        adminModal.addEventListener('click', function(event) {
-            if (event.target === adminModal) {
-                adminModal.classList.remove('show');
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function toggleCollegeNameField() {
+            var selectField = document.getElementById("id_belongs_to_college");
+            var collegeNameField = document.getElementById("college_name_group");
+            var courseField = document.getElementById("id_course");
+
+            if (!selectField || !collegeNameField || !courseField) return;
+
+            if (selectField.value === "no") {
+                collegeNameField.style.display = "block";
+                collegeNameField.querySelector("input").required = true;
+                restoreCourseOptions(); // Restore "Other" in course dropdown
+            } else {
+                collegeNameField.style.display = "none";
+                collegeNameField.querySelector("input").required = false;
+                removeOtherCourseOption(); // Remove "Other" from course dropdown
             }
-        });
-        
-        // For direct admin access without modal (alternative approach)
-        adminButton.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-            window.location.href = "{% url 'admin:index' %}";
-        });
-    </script>
-    <script>
+
+            toggleCourseField(); // Ensure course selection updates based on college status
+        }
+
+        function toggleCourseField() {
+            var belongsToCollege = document.getElementById("id_belongs_to_college").value;
+            var courseField = document.getElementById("id_course");
+            var otherCourseField = document.getElementById("other_course_group");
+
+            if (!courseField || !otherCourseField) return;
+
+            if (belongsToCollege === "no" && courseField.value === "other") {
+                otherCourseField.style.display = "block";
+                otherCourseField.querySelector("input").required = true;
+            } else {
+                otherCourseField.style.display = "none";
+                otherCourseField.querySelector("input").required = false;
+            }
+        }
+
+        function removeOtherCourseOption() {
+            var courseField = document.getElementById("id_course");
+            var otherOption = courseField.querySelector("option[value='other']");
+            if (otherOption) otherOption.remove();
+        }
+
+        function restoreCourseOptions() {
+            var courseField = document.getElementById("id_course");
+            if (!courseField.querySelector("option[value='other']")) {
+                var option = document.createElement("option");
+                option.value = "other";
+                option.textContent = "Other";
+                courseField.appendChild(option);
+            }
+        }
+
+        var selectCollegeField = document.getElementById("id_belongs_to_college");
+        var selectCourseField = document.getElementById("id_course");
+
+        if (selectCollegeField) {
+            selectCollegeField.addEventListener("change", toggleCollegeNameField);
+        }
+        if (selectCourseField) {
+            selectCourseField.addEventListener("change", toggleCourseField);
+        }
+
+        // Character counter logic
         function updateCounter(textarea, counterId) {
             const maxLength = textarea.getAttribute('maxlength');
             const currentLength = textarea.value.length;
             const remainingChars = maxLength - currentLength;
-        
             document.getElementById(counterId).innerText = `${remainingChars} characters left`;
         }
-        </script>
-        <script>
-            // Define the mapping between year and semesters
-            const yearToSemester = {
-                '1': ['1', '2'], // 1st Year: 1st & 2nd Semesters
-                '2': ['3', '4'], // 2nd Year: 3rd & 4th Semesters
-                '3': ['5', '6'], // 3rd Year: 5th & 6th Semesters
-                '4': ['7', '8']  // 4th Year: 7th & 8th Semesters
-            };
-        
-            // Get the year and semester dropdowns
-            const yearDropdown = document.querySelector('[name="year"]');
-            const semesterDropdown = document.querySelector('[name="semester"]');
-        
-            // Add event listener to update semesters dynamically
-            yearDropdown.addEventListener('change', function () {
-                const selectedYear = yearDropdown.value; // Get selected year
-                const semesters = yearToSemester[selectedYear] || []; // Get corresponding semesters
-        
-                // Clear existing semester options
+
+        // Semester selection logic
+        const yearToSemester = {
+            '1': ['1', '2'], 
+            '2': ['3', '4'], 
+            '3': ['5', '6'], 
+            '4': ['7', '8']  
+        };
+
+        const yearDropdown = document.querySelector('[name="year"]');
+        const semesterDropdown = document.querySelector('[name="semester"]');
+
+        if (yearDropdown && semesterDropdown) {
+            yearDropdown.addEventListener("change", function () {
+                const selectedYear = yearDropdown.value;
+                const semesters = yearToSemester[selectedYear] || [];
+
                 semesterDropdown.innerHTML = '';
-        
-                // Add new options dynamically
+
                 semesters.forEach(semester => {
                     const option = document.createElement('option');
                     option.value = semester;
@@ -559,6 +602,43 @@
                     semesterDropdown.appendChild(option);
                 });
             });
-        </script>
+
+            if (yearDropdown.value) {
+                yearDropdown.dispatchEvent(new Event("change"));
+            }
+        }
+
+        // Admin modal handling
+        const adminButton = document.getElementById('adminButton');
+        const adminModal = document.getElementById('adminModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModal = document.getElementById('cancelModal');
+
+        if (adminButton && adminModal) {
+            adminButton.addEventListener('click', function () {
+                adminModal.classList.add('show');
+            });
+
+            closeModal.addEventListener('click', function () {
+                adminModal.classList.remove('show');
+            });
+
+            cancelModal.addEventListener('click', function () {
+                adminModal.classList.remove('show');
+            });
+
+            adminModal.addEventListener('click', function (event) {
+                if (event.target === adminModal) {
+                    adminModal.classList.remove('show');
+                }
+            });
+
+            adminButton.addEventListener('contextmenu', function (event) {
+                event.preventDefault();
+                window.location.href = "{% url 'admin:index' %}";
+            });
+        }
+    });
+</script>
 </body>
 </html>

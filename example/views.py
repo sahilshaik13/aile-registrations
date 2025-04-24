@@ -28,43 +28,55 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            # Get cleaned data from the form
+            # Gather cleaned data
             data = {
                 'name': form.cleaned_data['name'],
                 'roll_number': form.cleaned_data['roll_number'],
-                'dob': form.cleaned_data['dob'].strftime('%Y-%m-%d'),  # Convert date to string
-                'mobile_number': form.cleaned_data['mobile_number'],  # New field for mobile number
-                'email': form.cleaned_data['email'],  # New field for email address
+                'dob': form.cleaned_data['dob'].strftime('%Y-%m-%d'),
+                'mobile_number': form.cleaned_data['mobile_number'],
+                'email': form.cleaned_data['email'],
                 'year': form.cleaned_data['year'],
                 'semester': form.cleaned_data['semester'],
-                'course': form.cleaned_data['course'],
                 'reason_to_join': form.cleaned_data['reason_to_join'],
                 'expectations': form.cleaned_data['expectations'],
+                'belongs_to_college': form.cleaned_data['belongs_to_college'],
             }
+
+            # Store college name correctly
+            if form.cleaned_data['belongs_to_college'] == 'no':
+                data['college_name'] = form.cleaned_data['college_name']
+            else:
+                data['college_name'] = "Nawab Shah Alam Khan College of Engineering and Technology"
+
+            # Store course correctly
+            if form.cleaned_data['belongs_to_college'] == 'no' and form.cleaned_data['course'] == 'other':
+                data['course'] = form.cleaned_data['other_course']
+            else:
+                data['course'] = form.cleaned_data['course']
+
             # Insert data into Supabase
             response = supabase.table('registrations').insert(data).execute()
-            registration_id = response.data[0]['id']  # Assuming the response contains the inserted ID
+            registration_id = response.data[0]['id']
 
-            # Create a Razorpay order
+            # Create Razorpay order
             razorpay_order = razorpay_client.order.create({
                 'amount': 20000,  # Amount in paise (100 INR)
                 'currency': 'INR',
                 'receipt': f'receipt# {registration_id}',
                 'notes': {
-                    'registration_id': registration_id  # Include registration ID in notes
+                    'registration_id': registration_id
                 }
             })
 
-            # Redirect to the payment page with the order ID and Razorpay key ID
             return render(request, 'payment.html', {
                 'razorpay_order_id': razorpay_order['id'],
                 'registration_id': registration_id,
-                'razorpay_key_id': RAZORPAY_KEY_ID,  # Pass the Razorpay key ID to the template
+                'razorpay_key_id': RAZORPAY_KEY_ID,
             })
     else:
         form = RegistrationForm()
+    
     return render(request, 'register.html', {'form': form})
-
 def success(request):
     payment_id = request.GET.get('payment_id')
     order_id = request.GET.get('order_id')
