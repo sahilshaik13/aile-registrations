@@ -13,8 +13,9 @@ class RegistrationForm(forms.Form):
         }
     )
     email = forms.EmailField()
-    year = forms.ChoiceField(choices=[])  # Initially empty, set dynamically
-    semester = forms.ChoiceField(choices=[])  # Initially empty, set dynamically
+
+    year = forms.ChoiceField(choices=[])  # Set dynamically in __init__
+    semester = forms.ChoiceField(choices=[])  # Set dynamically in __init__
 
     belongs_to_college = forms.ChoiceField(
         choices=[('yes', 'Yes'), ('no', 'No')],
@@ -53,11 +54,12 @@ class RegistrationForm(forms.Form):
         help_text="What do you hope to learn or gain from this experience? (max 500 characters)"
     )
 
-    # Predefined course lists including "Other"
+    # Predefined course lists
     BE_COURSES = [
         ('CSE', 'CSE'), ('CSE IOT', 'CSE IOT'), ('CSE DS', 'CSE DS'),
         ('CSE AIML', 'CSE AIML'), ('IT', 'IT'), ('CIVIL', 'CIVIL'),
-        ('MECH', 'MECH'), ('other', 'Other')
+        ('MECH', 'MECH'), ('other', 'Other'),
+        ('ECE', 'ECE'), ('EEE', 'EEE'),
     ]
 
     POLYTECHNIC_COURSES = [
@@ -66,29 +68,19 @@ class RegistrationForm(forms.Form):
         ('CIVIL', 'CIVIL'), ('MECH', 'MECH'), ('other', 'Other')
     ]
 
-    BE_YEARS = [
-        ('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')
-    ]
+    # Year and Semester options
+    BE_YEARS = [('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')]
+    BE_SEMESTERS = [('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
+                     ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester'),
+                     ('7', '7th Semester'), ('8', '8th Semester')]
 
-    BE_SEMESTERS = [
-        ('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
-        ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester'),
-        ('7', '7th Semester'), ('8', '8th Semester')
-    ]
-
-    POLYTECHNIC_YEARS = [
-        ('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year')
-    ]
-
-    POLYTECHNIC_SEMESTERS = [
-        ('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
-        ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester')
-    ]
+    POLYTECHNIC_YEARS = [('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year')]
+    POLYTECHNIC_SEMESTERS = [('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
+                              ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester')]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Get department from initial data if available
         department = kwargs.get('initial', {}).get('department', None)
 
         # Set course options based on department selection
@@ -101,31 +93,35 @@ class RegistrationForm(forms.Form):
             self.fields['year'].choices = self.BE_YEARS
             self.fields['semester'].choices = self.BE_SEMESTERS
 
-    def clean(self):
-        cleaned_data = super().clean()
-        belongs_to_college = cleaned_data.get('belongs_to_college')
-        college_name = cleaned_data.get('college_name')
-        department = cleaned_data.get('department')
-        course = cleaned_data.get('course')
-        other_course = cleaned_data.get('other_course')
+def clean(self):
+    cleaned_data = super().clean()
+    belongs_to_college = cleaned_data.get('belongs_to_college')
+    college_name = cleaned_data.get('college_name')
+    department = cleaned_data.get('department')
+    course = cleaned_data.get('course')
+    other_course = cleaned_data.get('other_course')
 
-        # Ensure valid department selection when user belongs to NSAKCET
-        if belongs_to_college == 'yes' and department not in ['be', 'polytechnic']:
-            self.add_error('department', 'Invalid department selection.')
+    # Ensure valid department selection when user belongs to NSAKCET
+    if belongs_to_college == 'yes' and department not in ['be', 'polytechnic']:
+        self.add_error('department', 'Invalid department selection.')
 
-        # Validate college name only if user selected "No"
-        if belongs_to_college == 'no' and not college_name:
-            self.add_error('college_name', 'Please provide your college name.')
+    # Validate college name only if user selected "No"
+    if belongs_to_college == 'no' and not college_name:
+        self.add_error('college_name', 'Please provide your college name.')
 
-        # Validate course selection based on department
-        valid_courses = self.POLYTECHNIC_COURSES if department == 'polytechnic' else self.BE_COURSES
-        valid_course_values = [c[0] for c in valid_courses]
+    # Validate course selection based on department
+    if department == 'polytechnic':
+        valid_courses = self.POLYTECHNIC_COURSES
+    else:
+        valid_courses = self.BE_COURSES
 
-        if course not in valid_course_values:
-            self.add_error('course', 'Invalid course selection.')
+    valid_course_values = [c[0] for c in valid_courses]
 
-        # Validate other course only if user selected "Other" and does not belong to NSAKCET
-        if belongs_to_college == 'no' and course == 'other' and not other_course:
-            self.add_error('other_course', 'Please specify your course.')
+    if course not in valid_course_values:
+        self.add_error('course', f'Invalid course selection. Available options for {department} are: {", ".join(valid_course_values)}.')
 
-        return cleaned_data
+    # Validate other course only if user selected "Other" and does not belong to NSAKCET
+    if belongs_to_college == 'no' and course == 'other' and not other_course:
+        self.add_error('other_course', 'Please specify your course.')
+
+    return cleaned_data
