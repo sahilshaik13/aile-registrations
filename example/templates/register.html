@@ -515,200 +515,248 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             function toggleCollegeFields() {
-                var selectField = document.getElementById("id_belongs_to_college");
-                var collegeNameField = document.getElementById("college_name_group");
-                var departmentGroup = document.getElementById("department_group");
+            var selectField = document.getElementById("id_belongs_to_college");
+            var collegeNameField = document.getElementById("college_name_group");
+            var departmentGroup = document.getElementById("department_group");
         
-                if (!selectField || !collegeNameField || !departmentGroup) return;
+            if (!selectField || !collegeNameField || !departmentGroup) return;
         
-                if (selectField.value === "no") {
-                    collegeNameField.style.display = "block";
-                    collegeNameField.querySelector("input").required = true;
-                    departmentGroup.style.display = "none"; 
-                    restoreOtherCourseOption();
-                } else {
-                    collegeNameField.style.display = "none";
-                    collegeNameField.querySelector("input").required = false;
-                    departmentGroup.style.display = "block"; 
-                    removeOtherCourseOption();
-                }
+            if (selectField.value === "no") {
+                collegeNameField.style.display = "block";
+                collegeNameField.querySelector("input").required = true;
+                departmentGroup.style.display = "none"; 
+                restoreOtherCourseOption();
+            } else {
+                collegeNameField.style.display = "none";
+                collegeNameField.querySelector("input").required = false;
+                departmentGroup.style.display = "block"; 
+                removeOtherCourseOption();
+            }
         
-                updateCourseOptions();
-                toggleOtherCourseField();
+            updateCourseOptions();
+            toggleOtherCourseField();
             }
         
             function updateCourseOptions() {
-                var departmentField = document.getElementById("department");
-                var courseField = document.getElementById("id_course");
+            var departmentField = document.getElementById("department");
+            var courseField = document.getElementById("id_course");
         
-                if (!departmentField || !courseField) return;
+            if (!departmentField || !courseField) return;
         
-                const beCourses = [
-                    { value: "CSE", text: "CSE" }, { value: "CSE IOT", text: "CSE IOT" },
-                    { value: "CSE DS", text: "CSE DS" }, { value: "CSE AIML", text: "CSE AIML" },
-                    { value: "IT", text: "IT" }, { value: "CIVIL", text: "CIVIL" },
-                    { value: "MECH", text: "MECH" }
-                ];
+            const beCourses = [
+                { value: "CSE", text: "CSE" }, { value: "CSE IOT", text: "CSE IOT" },
+                { value: "CSE DS", text: "CSE DS" }, { value: "CSE AIML", text: "CSE AIML" },
+                { value: "IT", text: "IT" }, { value: "CIVIL", text: "CIVIL" },
+                { value: "MECH", text: "MECH" }
+            ];
         
-                const polytechnicCourses = [
-                    { value: "CSE", text: "CSE" }, { value: "CSE AIML", text: "CSE AIML" },
-                    { value: "ECE", text: "ECE" }, { value: "EEE", text: "EEE" },
-                    { value: "CIVIL", text: "CIVIL" }, { value: "MECH", text: "MECH" }
-                ];
+            const polytechnicCourses = [
+                { value: "CSE", text: "CSE" }, { value: "CSE AIML", text: "CSE AIML" },
+                { value: "ECE", text: "ECE" }, { value: "EEE", text: "EEE" },
+                { value: "CIVIL", text: "CIVIL" }, { value: "MECH", text: "MECH" }
+            ];
         
-                let selectedCourses = departmentField.value === "polytechnic" ? polytechnicCourses : beCourses;
+            let selectedCourses = departmentField.value === "polytechnic" ? polytechnicCourses : beCourses;
         
-                courseField.innerHTML = "";
+            courseField.innerHTML = "";
         
-                selectedCourses.forEach(course => {
-                    var option = document.createElement("option");
-                    option.value = course.value;
-                    option.textContent = course.text;
-                    courseField.appendChild(option);
-                });
+            selectedCourses.forEach(course => {
+                var option = document.createElement("option");
+                option.value = course.value;
+                option.textContent = course.text;
+                courseField.appendChild(option);
+            });
         
-                if (document.getElementById("id_belongs_to_college").value === "no") {
-                    var otherOption = document.createElement("option");
-                    otherOption.value = "other";
-                    otherOption.textContent = "Other";
-                    courseField.appendChild(otherOption);
-                }
+            if (document.getElementById("id_belongs_to_college").value === "no") {
+                var otherOption = document.createElement("option");
+                otherOption.value = "other";
+                otherOption.textContent = "Other";
+                courseField.appendChild(otherOption);
+            }
             }
         
             function toggleOtherCourseField() {
-                var belongsToCollege = document.getElementById("id_belongs_to_college").value;
-                var courseField = document.getElementById("id_course");
-                var otherCourseField = document.getElementById("other_course_group");
+            var belongsToCollege = document.getElementById("id_belongs_to_college").value;
+            var courseField = document.getElementById("id_course");
+            var otherCourseField = document.getElementById("other_course_group");
         
-                if (!courseField || !otherCourseField) return;
+            if (!courseField || !otherCourseField) return;
         
-                if (belongsToCollege === "no" && courseField.value === "other") {
-                    otherCourseField.style.display = "block";
-                    otherCourseField.querySelector("input").required = true;
-                } else {
-                    otherCourseField.style.display = "none";
-                    otherCourseField.querySelector("input").required = false;
-                }
+            if (belongsToCollege === "no" && courseField.value === "other") {
+                otherCourseField.style.display = "block";
+                otherCourseField.querySelector("input").required = true;
+            } else {
+                otherCourseField.style.display = "none";
+                otherCourseField.querySelector("input").required = false;
+            }
             }
         
             function removeOtherCourseOption() {
-                var courseField = document.getElementById("id_course");
-                var otherOption = courseField.querySelector("option[value='other']");
-                if (otherOption) otherOption.remove();
+            var courseField = document.getElementById("id_course");
+            var otherOption = courseField.querySelector("option[value='other']");
+            if (otherOption) otherOption.remove();
             }
         
             function restoreOtherCourseOption() {
-                var courseField = document.getElementById("id_course");
-                if (!courseField.querySelector("option[value='other']")) {
-                    var option = document.createElement("option");
-                    option.value = "other";
-                    option.textContent = "Other";
-                    courseField.appendChild(option);
-                }
+            var courseField = document.getElementById("id_course");
+            if (!courseField.querySelector("option[value='other']")) {
+                var option = document.createElement("option");
+                option.value = "other";
+                option.textContent = "Other";
+                courseField.appendChild(option);
+            }
             }
         
             function updateCounter(textarea, counterId) {
-                const maxLength = textarea.getAttribute('maxlength');
-                const currentLength = textarea.value.length;
-                const remainingChars = maxLength - currentLength;
-                document.getElementById(counterId).innerText = `${remainingChars} characters left`;
+            const maxLength = textarea.getAttribute('maxlength');
+            const currentLength = textarea.value.length;
+            const remainingChars = maxLength - currentLength;
+            document.getElementById(counterId).innerText = `${remainingChars} characters left`;
             }
         
             function attachCharacterCounters() {
-                var reasonTextarea = document.getElementById("id_reason_to_join");
-                var expectationsTextarea = document.getElementById("id_expectations");
+            var reasonTextarea = document.getElementById("id_reason_to_join");
+            var expectationsTextarea = document.getElementById("id_expectations");
         
-                if (reasonTextarea) {
-                    reasonTextarea.addEventListener("input", function () {
-                        updateCounter(reasonTextarea, "reasonCounter");
-                    });
-                    updateCounter(reasonTextarea, "reasonCounter");
-                }
+            if (reasonTextarea) {
+                reasonTextarea.addEventListener("input", function () {
+                updateCounter(reasonTextarea, "reasonCounter");
+                });
+                updateCounter(reasonTextarea, "reasonCounter");
+            }
         
-                if (expectationsTextarea) {
-                    expectationsTextarea.addEventListener("input", function () {
-                        updateCounter(expectationsTextarea, "expectationsCounter");
-                    });
-                    updateCounter(expectationsTextarea, "expectationsCounter");
-                }
+            if (expectationsTextarea) {
+                expectationsTextarea.addEventListener("input", function () {
+                updateCounter(expectationsTextarea, "expectationsCounter");
+                });
+                updateCounter(expectationsTextarea, "expectationsCounter");
+            }
             }
         
             const yearToSemester = {
-                '1': ['1', '2'], 
-                '2': ['3', '4'], 
-                '3': ['5', '6'], 
-                '4': ['7', '8']
+            '1': ['1', '2'], 
+            '2': ['3', '4'], 
+            '3': ['5', '6'], 
+            '4': ['7', '8']
             };
         
             function setupSemesterDropdown() {
-                const yearDropdown = document.querySelector('[name="year"]');
-                const semesterDropdown = document.querySelector('[name="semester"]');
+            const yearDropdown = document.querySelector('[name="year"]');
+            const semesterDropdown = document.querySelector('[name="semester"]');
         
-                if (yearDropdown && semesterDropdown) {
-                    yearDropdown.addEventListener("change", function () {
-                        const selectedYear = yearDropdown.value;
-                        const semesters = yearToSemester[selectedYear] || [];
+            if (yearDropdown && semesterDropdown) {
+                yearDropdown.addEventListener("change", function () {
+                const selectedYear = yearDropdown.value;
+                const semesters = yearToSemester[selectedYear] || [];
         
-                        semesterDropdown.innerHTML = '';
+                semesterDropdown.innerHTML = '';
         
-                        semesters.forEach(semester => {
-                            const option = document.createElement('option');
-                            option.value = semester;
-                            option.textContent = `${semester} Semester`;
-                            semesterDropdown.appendChild(option);
-                        });
-                    });
+                semesters.forEach(semester => {
+                    const option = document.createElement('option');
+                    option.value = semester;
+                    option.textContent = `${semester} Semester`;
+                    semesterDropdown.appendChild(option);
+                });
+                });
         
-                    if (yearDropdown.value) {
-                        yearDropdown.dispatchEvent(new Event("change"));
-                    }
+                if (yearDropdown.value) {
+                yearDropdown.dispatchEvent(new Event("change"));
                 }
+            }
             }
         
             function setupAdminModal() {
-                const adminButton = document.getElementById('adminButton');
-                const adminModal = document.getElementById('adminModal');
-                const closeModal = document.getElementById('closeModal');
-                const cancelModal = document.getElementById('cancelModal');
+            const adminButton = document.getElementById('adminButton');
+            const adminModal = document.getElementById('adminModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelModal = document.getElementById('cancelModal');
         
-                if (adminButton && adminModal) {
-                    adminButton.addEventListener('click', function () {
-                        adminModal.classList.add('show');
-                    });
+            if (adminButton && adminModal) {
+                adminButton.addEventListener('click', function () {
+                adminModal.classList.add('show');
+                });
         
-                    closeModal.addEventListener('click', function () {
-                        adminModal.classList.remove('show');
-                    });
+                closeModal.addEventListener('click', function () {
+                adminModal.classList.remove('show');
+                });
         
-                    cancelModal.addEventListener('click', function () {
-                        adminModal.classList.remove('show');
-                    });
+                cancelModal.addEventListener('click', function () {
+                adminModal.classList.remove('show');
+                });
         
-                    adminModal.addEventListener('click', function (event) {
-                        if (event.target === adminModal) {
-                            adminModal.classList.remove('show');
-                        }
-                    });
-        
-                    adminButton.addEventListener('contextmenu', function (event) {
-                        event.preventDefault();
-                        window.location.href = "{% url 'admin:index' %}";
-                    });
+                adminModal.addEventListener('click', function (event) {
+                if (event.target === adminModal) {
+                    adminModal.classList.remove('show');
                 }
+                });
+        
+                adminButton.addEventListener('contextmenu', function (event) {
+                event.preventDefault();
+                window.location.href = "{% url 'admin:index' %}";
+                });
             }
+            }
+
+            function updatePolytechnicFields() {
+            var departmentField = document.getElementById("department");
+            var yearField = document.getElementById("id_year");
+            var semesterField = document.getElementById("id_semester");
+            
+            if (!departmentField || !yearField || !semesterField) return;
+            
+            const yearOptions = {
+                "be": [
+                { value: "1", text: "1st Year" }, { value: "2", text: "2nd Year" },
+                { value: "3", text: "3rd Year" }, { value: "4", text: "4th Year" }
+                ],
+                "polytechnic": [
+                { value: "1", text: "1st Year" }, { value: "2", text: "2nd Year" },
+                { value: "3", text: "3rd Year" }
+                ]
+            };
+            
+            const semesterOptions = {
+                "1": [{ value: "1", text: "1st Semester" }, { value: "2", text: "2nd Semester" }],
+                "2": [{ value: "3", text: "3rd Semester" }, { value: "4", text: "4th Semester" }],
+                "3": [{ value: "5", text: "5th Semester" }, { value: "6", text: "6th Semester" }],
+                "4": [{ value: "7", text: "7th Semester" }, { value: "8", text: "8th Semester" }]
+            };
+            
+            let selectedYears = yearOptions[departmentField.value] || [];
+            let selectedSemesters = semesterOptions[yearField.value] || [];
+            
+            yearField.innerHTML = "";
+            semesterField.innerHTML = "";
+            
+            selectedYears.forEach(year => {
+                var option = document.createElement("option");
+                option.value = year.value;
+                option.textContent = year.text;
+                yearField.appendChild(option);
+            });
+            
+            selectedSemesters.forEach(semester => {
+                var option = document.createElement("option");
+                option.value = semester.value;
+                option.textContent = semester.text;
+                semesterField.appendChild(option);
+            });
+            }
+            
+            document.getElementById("department").addEventListener("change", updatePolytechnicFields);
         
             var selectCollegeField = document.getElementById("id_belongs_to_college");
             var selectDepartmentField = document.getElementById("department");
             var selectCourseField = document.getElementById("id_course");
         
             if (selectCollegeField) {
-                selectCollegeField.addEventListener("change", toggleCollegeFields);
+            selectCollegeField.addEventListener("change", toggleCollegeFields);
             }
             if (selectDepartmentField) {
-                selectDepartmentField.addEventListener("change", updateCourseOptions);
+            selectDepartmentField.addEventListener("change", updateCourseOptions);
             }
             if (selectCourseField) {
-                selectCourseField.addEventListener("change", toggleOtherCourseField);
+            selectCourseField.addEventListener("change", toggleOtherCourseField);
             }
         
             toggleCollegeFields();

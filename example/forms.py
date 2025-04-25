@@ -13,14 +13,8 @@ class RegistrationForm(forms.Form):
         }
     )
     email = forms.EmailField()
-    year = forms.ChoiceField(choices=[
-        ('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')
-    ])
-    semester = forms.ChoiceField(choices=[
-        ('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
-        ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester'),
-        ('7', '7th Semester'), ('8', '8th Semester')
-    ])
+    year = forms.ChoiceField(choices=[])  # Initially empty, set dynamically
+    semester = forms.ChoiceField(choices=[])  # Initially empty, set dynamically
 
     belongs_to_college = forms.ChoiceField(
         choices=[('yes', 'Yes'), ('no', 'No')],
@@ -72,6 +66,25 @@ class RegistrationForm(forms.Form):
         ('CIVIL', 'CIVIL'), ('MECH', 'MECH'), ('other', 'Other')
     ]
 
+    BE_YEARS = [
+        ('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')
+    ]
+
+    BE_SEMESTERS = [
+        ('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
+        ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester'),
+        ('7', '7th Semester'), ('8', '8th Semester')
+    ]
+
+    POLYTECHNIC_YEARS = [
+        ('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year')
+    ]
+
+    POLYTECHNIC_SEMESTERS = [
+        ('1', '1st Semester'), ('2', '2nd Semester'), ('3', '3rd Semester'),
+        ('4', '4th Semester'), ('5', '5th Semester'), ('6', '6th Semester')
+    ]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -81,8 +94,12 @@ class RegistrationForm(forms.Form):
         # Set course options based on department selection
         if department == 'polytechnic':
             self.fields['course'].choices = self.POLYTECHNIC_COURSES
+            self.fields['year'].choices = self.POLYTECHNIC_YEARS
+            self.fields['semester'].choices = self.POLYTECHNIC_SEMESTERS
         else:
             self.fields['course'].choices = self.BE_COURSES
+            self.fields['year'].choices = self.BE_YEARS
+            self.fields['semester'].choices = self.BE_SEMESTERS
 
     def clean(self):
         cleaned_data = super().clean()
