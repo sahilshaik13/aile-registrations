@@ -48,6 +48,12 @@ def register(request):
             else:
                 data['college_name'] = "Nawab Shah Alam Khan College of Engineering and Technology"
 
+            # Store department correctly
+            if form.cleaned_data['belongs_to_college'] == 'yes':
+                data['department'] = form.cleaned_data['department']
+            else:
+                data['department'] = None  # No department for external colleges
+
             # Store course correctly
             if form.cleaned_data['belongs_to_college'] == 'no' and form.cleaned_data['course'] == 'other':
                 data['course'] = form.cleaned_data['other_course']
@@ -77,6 +83,7 @@ def register(request):
         form = RegistrationForm()
     
     return render(request, 'register.html', {'form': form})
+
 def success(request):
     payment_id = request.GET.get('payment_id')
     order_id = request.GET.get('order_id')
