@@ -273,6 +273,16 @@
             color: #6c757d;
             border: 1px solid var(--border-color);
         }
+        .camp-offerings {
+            text-align: center;
+            margin-top: 16px;
+        }
+        
+        .offerings-image {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+        }
         
         /* Responsive styles */
         @media (max-width: 768px) {
@@ -329,9 +339,14 @@
             </div>
 
             <h1>AppIgnite Registration</h1>
-        <div class="subtitle">Join our tech community and ignite your app development journey</div>
-        
-        <form method="post">
+            <div class="subtitle">Join our Summer Camp to learn in a fun way</div>
+            
+            <!-- Image describing the offerings -->
+            <div class="camp-offerings">
+                <img src="{% static 'img/approad.png' %}" alt="What we offer in our 6-day Summer Camp" class="offerings-image">
+            </div>
+            <br>
+            <form method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="belongs_to_college">Do you belong to Nawab Shah Alam Khan College of Engineering and Technology?</label>
