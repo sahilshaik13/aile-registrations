@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'img/appignite-logo.png' %}" type="image/x-icon">
     <title>AppIgnite Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -341,13 +342,13 @@
             </span>
         </div>
     
-            <h1>AppIgnite Registration</h1>
-            <div class="subtitle">Join our Summer Camp to learn in a fun way</div>
-            
-            <!-- Image describing the offerings -->
-            <div class="camp-offerings">
-                <img src="{% static 'img/approad.png' %}" alt="What we offer in our 6-day Summer Camp" class="offerings-image">
-            </div>
+        <h1>AppIgnite Registration</h1>
+        <div class="subtitle">Join our Summer Camp to learn in a fun way</div>
+        
+        <!-- Image describing the offerings -->
+        <div class="camp-offerings">
+            <img src="{% static 'img/appignite-roadmap.png' %}" alt="AppIgnite Learning Summer Camp" class="offerings-image">
+        </div>
             <br>
             <form method="post">
             {% csrf_token %}
