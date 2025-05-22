@@ -17,6 +17,7 @@ url = config('SUPABASE_URL')
 key = config('SUPABASE_ANON_KEY')
 supabase: Client = create_client(url, key)
 
+
 RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
 RAZORPAY_WEBHOOK_SECRET = config('RAZORPAY_WEBHOOK_SECRET')
