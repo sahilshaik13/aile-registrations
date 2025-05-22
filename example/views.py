@@ -100,13 +100,24 @@ def success(request):
         'registration': registration
     })
 
+import json
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from supabase import Client
+from decouple import config
+
+# Initialize Supabase client using your existing variables
+url = config('SUPABASE_URL')
+key = config('SUPABASE_ANON_KEY')
+supabase: Client = create_client(url, key)
+
 def login_user(request):
     if request.method == 'POST':
         try:
             # Handle JSON or form-encoded data
             if request.content_type == "application/json":
                 data = json.loads(request.body)
-                username = data.get('username')  # Username still required for authentication
+                username = data.get('username')  # Using 'username' as per your original structure
                 password = data.get('password')
             else:
                 username = request.POST.get('username')
@@ -116,16 +127,12 @@ def login_user(request):
             if not username or not password:
                 return HttpResponse("Username and password are required", status=400)
 
-            # Authenticate user
-            response = supabase.table('users').select('password').eq('username', username).execute()
-            if response.data:
-                stored_password = response.data[0]['password']
+            # Authenticate using Supabase Auth
+            response = supabase.auth.sign_in_with_password({"email": username, "password": password})
 
-                if check_password(password, stored_password):
-                    # Redirect to home page without including the name
-                    return redirect('/home/')  # Change this to your desired home page URL
+            if response and response.user:
+                return redirect('/home/')  # Redirect to the home page
 
-            # If credentials are invalid
             return HttpResponse("Invalid credentials", status=401)
 
         except json.JSONDecodeError:
